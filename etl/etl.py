@@ -48,6 +48,16 @@ for _, row in players.iterrows():
         ON CONFLICT (player_id) DO NOTHING
     """, (row['PLAYER_ID'], row['PLAYER_NAME'], row['PLAYER_HEIGHT_INCHES'], row['PLAYER_WEIGHT']))
 
+# Update player team_id based on most recent team
+print("Linking players to teams...")
+latest_team = stats_df.dropna(subset=['TEAM']).sort_values('SEASON').groupby('PLAYER_ID').last()
+for player_id, row in latest_team.iterrows():
+    cur.execute("""
+        UPDATE player
+        SET team_id = (SELECT team_id FROM team WHERE team_name = %s)
+        WHERE player_id = %s
+    """, (row['TEAM'], player_id))
+
 # Load season stats
 print("Loading season stats...")
 for _, row in stats_df.iterrows():

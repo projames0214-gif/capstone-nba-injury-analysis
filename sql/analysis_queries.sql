@@ -34,13 +34,20 @@ LEFT JOIN injury_event ie ON ss.player_id = ie.player_id
 GROUP BY age_group
 ORDER BY total_injuries DESC;
 
--- Q4: Which positions have the highest injury rates?
-SELECT p.position, COUNT(ie.injury_id) AS total_injuries
-FROM player p
-LEFT JOIN injury_event ie ON p.player_id = ie.player_id
-WHERE p.position IS NOT NULL
-GROUP BY p.position
-ORDER BY total_injuries DESC;
+-- Q4: Given a player's workload (minutes per game), what is the probability they get injured in a season?
+SELECT
+    CASE
+        WHEN minutes_per_game < 15 THEN 'Low (<15 min)'
+        WHEN minutes_per_game BETWEEN 15 AND 28 THEN 'Medium (15-28 min)'
+        ELSE 'High (>28 min)'
+    END AS workload_tier,
+    COUNT(DISTINCT ss.player_id) AS total_players,
+    COUNT(DISTINCT ie.player_id) AS injured_players,
+    ROUND(COUNT(DISTINCT ie.player_id)::numeric / COUNT(DISTINCT ss.player_id) * 100, 1) AS injury_probability_pct
+FROM season_stats ss
+LEFT JOIN injury_event ie ON ss.player_id = ie.player_id AND ss.season = ie.season
+GROUP BY workload_tier
+ORDER BY injury_probability_pct DESC;
 
 -- Q5: Which injury types cause the most games missed?
 SELECT injury_type, ROUND(AVG(days_missed)) AS avg_days_missed, COUNT(*) AS occurrences
