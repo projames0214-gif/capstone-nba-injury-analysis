@@ -1,7 +1,7 @@
 # Technical Report — NBA Player Injury & Performance Analysis
-**Author:** Dylan James  
-**Program:** Dev10 Data Engineering  
-**Date:** July 2, 2026
+Dylan James  
+Dev10 Data Engineering  
+Date: July 2, 2026
 
 ---
 
@@ -91,7 +91,7 @@ The DAG is scheduled `@daily` with `catchup=False`, meaning it runs once per day
 
 ---
 
-## 4. Technologies Used
+## 4. Technologies Used (I looked at how this technology section is typically written professionally and tried to model it as uch. )
 
 | Technology | Version | Purpose |
 |---|---|---|
